@@ -16,7 +16,6 @@
 *::-webkit-scrollbar {
   display: none;
 }
-
 :root {
   --primary: #7a5af5;
   --secondary: #9c6eff;
@@ -35,8 +34,6 @@
   --ease: cubic-bezier(0.25, 0.8, 0.25, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* 底部磨砂提示 */
 .toast {
   position: fixed;
   bottom: 30px;
@@ -59,8 +56,6 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-
-/* 粒子背景 */
 #particles {
   position: fixed;
   top: 0;
@@ -70,7 +65,6 @@
   z-index: -1;
   background: #0f1219;
 }
-
 body {
   position: relative;
   background: transparent;
@@ -82,8 +76,6 @@ body {
   line-height: 1.7;
   z-index: 1;
 }
-
-/* 标题动画 */
 .page-title {
   text-align: center;
   font-size: 36px;
@@ -96,8 +88,6 @@ body {
   opacity: 0;
   animation: fadeDown 1.4s var(--ease-out) forwards, gradient 6s linear infinite;
 }
-
-/* 卡片容器 */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -117,8 +107,6 @@ body {
 }
 .card:nth-child(2) { animation-delay: 0.18s; }
 .card:nth-child(3) { animation-delay: 0.32s; }
-
-/* 输入框 */
 input, textarea {
   width: 100%;
   background: #121621;
@@ -141,8 +129,6 @@ textarea {
   min-height: 130px;
   resize: vertical;
 }
-
-/* 按钮 */
 .btn {
   padding: 16px 30px;
   border-radius: var(--radius-sm);
@@ -164,7 +150,6 @@ textarea {
 .btn-primary:active {
   transform: translateY(0) scale(0.98);
 }
-
 .btn-reply {
   background: transparent;
   color: var(--accent);
@@ -180,8 +165,6 @@ textarea {
   color: var(--primary);
   transform: scale(1.03);
 }
-
-/* 留言列表 */
 .message {
   padding: 1.6rem 0;
   border-bottom: 1px solid var(--border);
@@ -189,7 +172,6 @@ textarea {
   animation: msgSlide 0.8s var(--ease-out) forwards;
 }
 .message:last-child { border-bottom: none; }
-
 .msg-header {
   display: flex;
   align-items: center;
@@ -214,8 +196,6 @@ textarea {
   white-space: pre-wrap;
   line-height: 1.8;
 }
-
-/* 回复区域 */
 .reply-box {
   margin-top: 1.2rem;
   max-height: 0;
@@ -225,7 +205,6 @@ textarea {
 .reply-box.active {
   max-height: 280px;
 }
-
 .reply-list {
   margin-left: 1.4rem;
   margin-top: 1.2rem;
@@ -244,7 +223,6 @@ textarea {
   color: var(--accent);
   font-weight: 600;
 }
-
 .empty {
   text-align: center;
   padding: 4rem 1rem;
@@ -253,8 +231,6 @@ textarea {
   opacity: 0;
   animation: fadeIn 0.8s var(--ease-out) forwards;
 }
-
-/* 统一动画体系 */
 @keyframes fadeDown {
   from { opacity:0; transform: translateY(-35px); }
   to { opacity:1; transform: translateY(0); }
@@ -280,107 +256,121 @@ textarea {
 </head>
 <body>
 <div class="toast" id="toast"></div>
-
 <div id="particles"></div>
 <h1 class="page-title">反馈区</h1>
-
 <div class="card">
   <input type="text" id="name" placeholder="你的昵称">
   <textarea id="content" placeholder="分享你的反馈..."></textarea>
   <button class="btn btn-primary" onclick="sendMsg()">发布留言</button>
 </div>
-
 <div class="card" id="msgList">
   <div class="empty">暂无留言，快来发表第一条吧～</div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script>
+// 云端留言
+const GIST = {
+  ID: "7226d2f948b4ec1e20961ac61b1e7bae",
+  TOKEN: "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",
+  FILE: "messages.json"
+};
+// ========================================
+
 function showToast(text) {
-  const toast = document.getElementById('toast');
-  toast.textContent = text;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2400);
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
 particlesJS("particles", {
-  particles: {
-    number: { value: 70, density: { enable: true, value_area: 800 } },
-    color: { value: "#7a5af5" },
-    shape: { type: "circle" },
-    opacity: { value: 0.45, random: true },
-    size: { value: 2.5, random: true },
-    line_linked: { enable: true, distance: 140, color: "#7a5af5", opacity: 0.22, width: 1 },
-    move: { enable: true, speed: 0.5, random: true, straight: false, out_mode: "out" }
-  },
-  interactivity: {
-    events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: true, mode: "push" }, resize: true }
-  },
-  retina_detect: true
+  particles:{number:{value:60,density:{enable:true}},color:{value:"#7a5af5"},opacity:{value:0.4},size:{value:2},line_linked:{enable:true,distance:120,color:"#7a5af5",opacity:0.15}},
+  interactivity:{events:{onhover:{enable:true,mode:"grab"}}},retina_detect:true
 });
 
-const STORAGE = "message_board_v3";
-let msgList = JSON.parse(localStorage.getItem(STORAGE)) || [];
+let msgList = [];
 
-function render() {
-  const el = document.getElementById("msgList");
-  if (msgList.length === 0) {
-    el.innerHTML = `<div class="empty">暂无留言，快来发表第一条吧～</div>`;
-    return;
+async function loadFromCloud(){
+  try{
+    let res = await fetch("https://api.github.com/gists/"+GIST.ID);
+    let data = await res.json();
+    let txt = data.files[GIST.FILE].content;
+    msgList = JSON.parse(txt)||[];
+  }catch(e){
+    msgList = [];
   }
-  el.innerHTML = msgList.map((item, i) => `
-    <div class="message" style="animation-delay: ${i*0.16}s">
-      <div class="msg-header">
-        <span class="name">${item.name}</span>
-        <span class="time">${item.time}</span>
-      </div>
-      <div class="content">${item.content}</div>
-      <button class="btn btn-reply" onclick="toggleReply(${i})">回复</button>
-      <div class="reply-box" id="replyBox${i}">
-        <input type="text" id="rName${i}" placeholder="昵称">
-        <textarea id="rContent${i}" placeholder="回复内容..."></textarea>
-        <button class="btn btn-primary" onclick="sendReply(${i})">发送</button>
-      </div>
-      <div class="reply-list">
-        ${(item.reply || []).map((r,j) => `
-          <div class="reply-item" style="animation-delay: ${j*0.12}s">
-            <div><strong>${r.name}</strong> <span>${r.time}</span></div>
-            <div>${r.content}</div>
-          </div>
-        `).join('')}
-      </div>
+  render();
+}
+
+async function saveToCloud(){
+  try{
+    await fetch("https://api.github.com/gists/"+GIST.ID,{
+      method:"PATCH",
+      headers:{Authorization:"token "+GIST.TOKEN,"Content-Type":"application/json"},
+      body:JSON.stringify({files:{[GIST.FILE]:{content:JSON.stringify(msgList,null,2)}}})
+    });
+    return true;
+  }catch(e){return false;}
+}
+
+function render(){
+  let el = document.getElementById("msgList");
+  if(msgList.length===0){
+    el.innerHTML='<div class="empty">暂无留言，快来发表第一条吧～</div>';return;
+  }
+  el.innerHTML = msgList.map((m,i)=>`
+  <div class="message" style="animation-delay:${i*0.15}s">
+    <div class="msg-header">
+      <span class="name">${m.name}</span>
+      <span class="time">${m.time}</span>
     </div>
-  `).join('');
+    <div class="content">${m.content}</div>
+    <button class="btn btn-reply" onclick="toggleReply(${i})">回复</button>
+    <div class="reply-box" id="replyBox${i}">
+      <input type="text" id="rn${i}" placeholder="昵称">
+      <textarea id="rc${i}" placeholder="回复内容"></textarea>
+      <button class="btn btn-primary" onclick="sendReply(${i})">发送</button>
+    </div>
+    <div class="reply-list">
+      ${(m.reply||[]).map(r=>`<div class="reply-item"><strong>${r.name}</strong> ${r.time}<br>${r.content}</div>`).join('')}
+    </div>
+  </div>`).join('');
 }
 
-function sendMsg() {
-  const name = document.getElementById("name").value.trim();
-  const content = document.getElementById("content").value.trim();
-  if (!name || !content) return alert("请填写完整信息");
-  msgList.unshift({ name, content, time: new Date().toLocaleString(), reply: [] });
-  localStorage.setItem(STORAGE, JSON.stringify(msgList));
-  document.getElementById("name").value = "";
-  document.getElementById("content").value = "";
-  render();
-  showToast("✅ 留言发布成功 ✅");
+async function sendMsg(){
+  let n = document.getElementById("name").value.trim();
+  let c = document.getElementById("content").value.trim();
+  if(!n||!c)return alert("请填写完整");
+  msgList.unshift({name:n,content:c,time:new Date().toLocaleString(),reply:[]});
+  showToast("正在同步到云端...");
+  let ok = await saveToCloud();
+  if(ok){
+    document.getElementById("name").value="";
+    document.getElementById("content").value="";
+    render();
+    showToast("✅ 发布成功（已云端同步）");
+  }else{
+    msgList.shift();
+    showToast("❌ 同步失败");
+  }
 }
 
-function toggleReply(i) {
-  const box = document.getElementById(`replyBox${i}`);
-  box.classList.toggle("active");
+function toggleReply(i){
+  document.getElementById(`replyBox${i}`).classList.toggle("active");
 }
 
-function sendReply(i) {
-  const name = document.getElementById(`rName${i}`).value.trim();
-  const content = document.getElementById(`rContent${i}`).value.trim();
-  if (!name || !content) return alert("请填写完整");
-  msgList[i].reply.push({ name, content, time: new Date().toLocaleString() });
-  localStorage.setItem(STORAGE, JSON.stringify(msgList));
-  render();
-  showToast("✅ 回复成功");
+async function sendReply(i){
+  let n = document.getElementById(`rn${i}`).value.trim();
+  let c = document.getElementById(`rc${i}`).value.trim();
+  if(!n||!c)return alert("请填写完整");
+  msgList[i].reply.push({name:n,content:c,time:new Date().toLocaleString()});
+  showToast("正在同步回复...");
+  let ok = await saveToCloud();
+  if(ok){render();showToast("✅ 回复成功（已同步）");}
+  else{msgList[i].reply.pop();showToast("❌ 同步失败");}
 }
 
-render();
+window.onload = loadFromCloud;
 </script>
 </body>
 </html>
